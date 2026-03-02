@@ -1,0 +1,15 @@
+{
+  "navigationFallback": {
+    "document": "/index.html",
+    "exclude": ["/api/*", "/_next/*", "/static/*"]
+  },
+  "routes": [
+    {
+      "route": "/api/*",
+      "allowedRoles": ["anonymous"]
+    }
+  ],
+  "platform": {
+    "apiRuntime": "node:18"
+  }
+}
