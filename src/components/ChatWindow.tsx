@@ -4,7 +4,16 @@ import { useState, useRef, useEffect } from "react";
 import Message from "./Message";
 import TypingIndicator from "./TypingIndicator";
 
-type MessageType = { role: "user" | "assistant"; content: string };
+type AgentMessage = {
+  type: "human" | "ai" | "tool" | string;
+  content: string;
+};
+
+type MessageType = {
+  role: "user" | "assistant";
+  content: string;
+  agentMessages?: AgentMessage[];
+};
 
 const AZURE_URL = "https://leave-policy-agent-aaavdzbuf3bcexej.westus2-01.azurewebsites.net/agent";
 
@@ -47,10 +56,24 @@ export default function ChatWindow() {
       });
       if (!res.ok) throw new Error();
       const data = await res.json();
-      const reply =
-        data?.response || data?.output || data?.answer ||
-        data?.result || data?.message || JSON.stringify(data);
-      setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
+      const agentMessages: AgentMessage[] = data?.messages ?? [];
+
+      // Get last AI message as the summary content
+      const lastAiMessage = [...agentMessages]
+        .reverse()
+        .find((m) => m.type === "ai");
+
+      const reply = lastAiMessage?.content ?? "No response received.";
+
+      // Store full agent trace for display
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: reply,
+          agentMessages: agentMessages,
+        },
+      ]);
     } catch {
       setError("⚠️ Could not reach the AI backend. Please try again shortly.");
       setMessages((prev) => prev.slice(0, -1));
