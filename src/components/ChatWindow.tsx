@@ -43,7 +43,7 @@ export default function ChatWindow() {
 
     try {
       // Calls our Next.js proxy → /api/chat → Azure Function
-      const res = await fetch("/api/chat", {
+      const res = await fetch("https://leave-policy-agent-aaavdzbuf3bcexej.westus2-01.azurewebsites.net/agent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
