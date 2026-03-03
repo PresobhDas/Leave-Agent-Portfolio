@@ -47,7 +47,7 @@ export default function ChatWindow() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: updated.map(({ role, content }) => ({ role, content })),
+          inp_query: userText,
         }),
       });
 

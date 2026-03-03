@@ -2,11 +2,5 @@
   "navigationFallback": {
     "rewrite": "/index.html",
     "exclude": ["/_next/*", "/static/*"]
-  },
-  "routes": [
-    {
-      "route": "/*",
-      "allowedRoles": ["anonymous"]
-    }
-  ]
+  }
 }
