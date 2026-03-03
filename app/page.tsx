@@ -97,7 +97,3 @@ export default function Home() {
 }
 ```
 ---
-
-### `.env.local` ← **Never commit this to GitHub!**
-```
-AZURE_FUNCTION_URL=https://YOUR_FUNCTION_APP.azurewebsites.net/api/chat
