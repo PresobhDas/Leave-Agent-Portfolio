@@ -80,7 +80,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-6 flex flex-col sm:flex-row justify-between gap-2 text-xs text-slate-500">
           <span>Built with Next.js · Tailwind CSS · Azure Static Web Apps</span>
           
-            href="https://github.com/PresobhDas/Leave-Agent-Portfolio"
+          <a href="https://github.com/PresobhDas/Leave-Agent-Portfolio"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-violet-400 transition-colors flex items-center gap-1"
@@ -96,7 +96,6 @@ export default function Home() {
   );
 }
 ```
-
 ---
 
 ### `.env.local` ← **Never commit this to GitHub!**
