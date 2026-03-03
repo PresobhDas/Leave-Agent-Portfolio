@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AI Agent Portfolio | Your Name",
+  title: "Leave Application Agent Portfolio | Presobh",
   description:
     "Agentic AI system powered by MCP Server and Azure Functions. Built as a portfolio project.",
   openGraph: {
