@@ -15,7 +15,7 @@ type MessageType = {
   agentMessages?: AgentMessage[];
 };
 
-const AZURE_URL = "https://leave-policy-agent-aaavdzbuf3bcexej.westus2-01.azurewebsites.net/agent";
+const AZURE_URL = "https://leave-agent-api.ashyglacier-369787e5.westus2.azurecontainerapps.io/agent";
 
 const SUGGESTED = [
   "What can this AI agent do?",
