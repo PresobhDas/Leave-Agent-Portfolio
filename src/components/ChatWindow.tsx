@@ -83,6 +83,57 @@ export default function ChatWindow() {
     }
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const res = await fetch(
+        "https://leave-agent-api.ashyglacier-369787e5.westus2.azurecontainerapps.io/get-upload-url",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ filename: file.name }),
+        }
+      );
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text);
+      }
+
+      const { uploadUrl } = await res.json();
+
+      await fetch(uploadUrl, {
+        method: "PUT",
+        headers: {
+          "x-ms-blob-type": "BlockBlob",
+          "Content-Type": file.type,
+        },
+        body: file,
+      });
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: `✅ File "${file.name}" uploaded successfully.`,
+        },
+      ]);
+
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "Upload failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div style={{ backgroundColor: "#1e293b", border: "1px solid #334155", borderRadius: "16px", overflow: "hidden" }}
       className="shadow-2xl">
@@ -125,7 +176,38 @@ export default function ChatWindow() {
       )}
 
       {/* Input */}
-      <div style={{ borderTop: "1px solid #334155" }} className="p-3 flex gap-2">
+      <div style={{ borderTop: "1px solid #334155" }} className="p-3 flex gap-2 items-center">
+
+        {/* 📎 Upload button */}
+        <label
+          style={{
+            backgroundColor: "#0f172a",
+            border: "1px solid #334155",
+            borderRadius: "12px",
+            width: "42px",
+            height: "42px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: loading ? "not-allowed" : "pointer",
+            opacity: loading ? 0.5 : 1,
+            fontSize: "18px",
+          }}
+          title="Upload document"
+        >
+          📎
+          <input
+            type="file"
+            style={{ display: "none" }}
+            disabled={loading}
+            onChange={(e) => {
+              handleFileUpload(e);
+              e.target.value = ""; // reset input
+            }}
+          />
+        </label>
+
+        {/* Input */}
         <input
           ref={inputRef}
           value={input}
@@ -143,7 +225,10 @@ export default function ChatWindow() {
             flex: 1,
           }}
         />
-        <button onClick={() => sendMessage()}
+
+        {/* Send button */}
+        <button
+          onClick={() => sendMessage()}
           disabled={!input.trim() || loading}
           style={{
             backgroundColor: input.trim() && !loading ? "#7c3aed" : "#334155",
@@ -157,7 +242,8 @@ export default function ChatWindow() {
             justifyContent: "center",
             fontSize: "18px",
             flexShrink: 0,
-          }}>
+          }}
+        >
           ➤
         </button>
       </div>
