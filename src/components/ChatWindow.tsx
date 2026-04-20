@@ -134,6 +134,9 @@ export default function ChatWindow() {
       } else {
         setError("Upload failed");
       }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
