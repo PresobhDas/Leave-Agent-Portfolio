@@ -126,12 +126,14 @@ export default function ChatWindow() {
         },
       ]);
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setError(err.message || "Upload failed");
-    } finally {
-      setLoading(false);
-    }
+
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Upload failed");
+      }
   };
 
   return (
