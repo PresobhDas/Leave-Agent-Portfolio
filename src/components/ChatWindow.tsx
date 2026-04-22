@@ -100,13 +100,13 @@ export default function ChatWindow() {
       if (!res.ok) throw new Error();
 
       const data = await res.json();
-
+      const formatted = JSON.stringify(data, null, 2);
       // Show result in chat window
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content: "📊 Evaluation completed successfully.",
+          content: `📊 Evaluation Result:\n\n${formatted}`,
         },
       ]);
 
