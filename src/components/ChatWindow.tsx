@@ -16,6 +16,7 @@ type MessageType = {
 };
 
 const AZURE_URL = "https://leave-agent-api.ashyglacier-369787e5.westus2.azurecontainerapps.io/agent";
+const EVALUATE_URL = "https://leave-agent-api.ashyglacier-369787e5.westus2.azurecontainerapps.io/evaluate";
 
 const SUGGESTED = [
   "What can this AI agent do?",
@@ -80,6 +81,41 @@ export default function ChatWindow() {
     } finally {
       setLoading(false);
       inputRef.current?.focus();
+    }
+  };
+
+  const runEvaluation = async () => {
+    if (loading) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch(EVALUATE_URL, {
+        method: "POST", // change to GET if needed
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({})
+      });
+
+      if (!res.ok) throw new Error();
+
+      const data = await res.json();
+
+      // Show result in chat window
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "📊 Evaluation completed successfully.",
+        },
+      ]);
+
+      console.log("Evaluation result:", data);
+
+    } catch {
+      setError("⚠️ Evaluation failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -230,7 +266,24 @@ export default function ChatWindow() {
             flex: 1,
           }}
         />
-
+        <button
+            onClick={runEvaluation}
+            disabled={loading}
+            style={{
+              backgroundColor: "#10b981",
+              borderRadius: "12px",
+              padding: "0 12px",
+              height: "42px",
+              border: "none",
+              cursor: loading ? "not-allowed" : "pointer",
+              color: "white",
+              fontSize: "12px",
+              fontWeight: "bold",
+              flexShrink: 0,
+            }}
+          >
+            Run Evaluation
+        </button>
         {/* Send button */}
         <button
           onClick={() => sendMessage()}
