@@ -32,6 +32,13 @@ const CARDS = [
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<"chat" | "evaluation">("chat");
+  const [metrics, setMetrics] = useState<{
+  faithfulness: number;
+  relevancy: number;
+  } | null>(null);
+
+const [metricsLoading, setMetricsLoading] = useState(false);
+const [metricsError, setMetricsError] = useState<string | null>(null);
 
   return (
     <main style={{ backgroundColor: "#0f172a", minHeight: "100vh" }} className="flex flex-col">
@@ -160,12 +167,24 @@ export default function Home() {
             <button
               onClick={async () => {
                 try {
-                  // 🔥 Placeholder API (replace later)
-                  const res = await fetch("/api/refresh-metrics");
+                  setMetricsLoading(true);
+                  setMetricsError(null);
+
+                  const res = await fetch("https://leave-agent-api.ashyglacier-369787e5.westus2.azurecontainerapps.io/evaluate"); // 🔥 replace
+
+                  if (!res.ok) throw new Error();
+
                   const data = await res.json();
-                  console.log("Metrics:", data);
+
+                  setMetrics({
+                    faithfulness: data.faithfulness,
+                    relevancy: data.relevancy,
+                  });
+
                 } catch (err) {
-                  console.error("Error fetching metrics", err);
+                  setMetricsError("Failed to fetch metrics");
+                } finally {
+                  setMetricsLoading(false);
                 }
               }}
               style={{
@@ -183,14 +202,60 @@ export default function Home() {
             </button>
 
             {/* Placeholder */}
-            <div
-              style={{
-                marginTop: "20px",
-                color: "#94a3b8",
-                fontSize: "12px",
-              }}
-            >
-              Metrics will be displayed here.
+            <div style={{ marginTop: "20px" }}>
+              {metricsLoading && (
+                <div style={{ color: "#94a3b8", fontSize: "12px" }}>
+                  Loading metrics...
+                </div>
+              )}
+
+              {metricsError && (
+                <div style={{ color: "#f87171", fontSize: "12px" }}>
+                  {metricsError}
+                </div>
+              )}
+
+              {metrics && (
+                <div className="flex justify-center gap-6 mt-4">
+
+                  {/* Faithfulness */}
+                  <div
+                    style={{
+                      backgroundColor: "#0f172a",
+                      border: "1px solid #334155",
+                      borderRadius: "12px",
+                      padding: "16px",
+                      minWidth: "120px",
+                    }}
+                  >
+                    <div style={{ color: "#a78bfa", fontSize: "12px" }}>
+                      Faithfulness
+                    </div>
+                    <div style={{ color: "#fff", fontSize: "20px", fontWeight: "bold" }}>
+                      {metrics.faithfulness.toFixed(2)}
+                    </div>
+                  </div>
+
+                  {/* Relevancy */}
+                  <div
+                    style={{
+                      backgroundColor: "#0f172a",
+                      border: "1px solid #334155",
+                      borderRadius: "12px",
+                      padding: "16px",
+                      minWidth: "120px",
+                    }}
+                  >
+                    <div style={{ color: "#38bdf8", fontSize: "12px" }}>
+                      Relevancy
+                    </div>
+                    <div style={{ color: "#fff", fontSize: "20px", fontWeight: "bold" }}>
+                      {metrics.relevancy.toFixed(2)}
+                    </div>
+                  </div>
+
+                </div>
+              )}
             </div>
           </div>
         )}
