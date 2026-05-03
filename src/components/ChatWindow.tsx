@@ -84,41 +84,6 @@ export default function ChatWindow() {
     }
   };
 
-  const runEvaluation = async () => {
-    if (loading) return;
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch(EVALUATE_URL, {
-        method: "POST", // change to GET if needed
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({})
-      });
-
-      if (!res.ok) throw new Error();
-
-      const data = await res.json();
-      const formatted = JSON.stringify(data, null, 2);
-      // Show result in chat window
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: `📊 Evaluation Result:\n\n${formatted}`,
-        },
-      ]);
-
-      console.log("Evaluation result:", data);
-
-    } catch {
-      setError("⚠️ Evaluation failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -266,24 +231,6 @@ export default function ChatWindow() {
             flex: 1,
           }}
         />
-        <button
-            onClick={runEvaluation}
-            disabled={loading}
-            style={{
-              backgroundColor: "#10b981",
-              borderRadius: "12px",
-              padding: "0 12px",
-              height: "42px",
-              border: "none",
-              cursor: loading ? "not-allowed" : "pointer",
-              color: "white",
-              fontSize: "12px",
-              fontWeight: "bold",
-              flexShrink: 0,
-            }}
-          >
-            Run Evaluation
-        </button>
         {/* Send button */}
         <button
           onClick={() => sendMessage()}
