@@ -32,6 +32,19 @@ const CARDS = [
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<"chat" | "evaluation">("chat");
+  type MessageType = {
+    role: "user" | "assistant";
+    content: string;
+    agentMessages?: any[];
+  };
+
+  const [messages, setMessages] = useState<MessageType[]>([
+    {
+      role: "assistant",
+      content:
+        "👋 Hi! I'm the AI agent behind this portfolio. Ask me anything about the architecture, tech stack, or what problems this system solves!",
+    },
+  ]);
   const [metrics, setMetrics] = useState<{
   faithfulness: number;
   relevancy: number;
@@ -147,7 +160,9 @@ const [metricsError, setMetricsError] = useState<string | null>(null);
         </div>
 
         {/* Tab Content */}
-        {activeTab === "chat" && <ChatWindow />}
+        {activeTab === "chat" && (
+          <ChatWindow messages={messages} setMessages={setMessages} />
+        )}
 
         {activeTab === "evaluation" && (
           <div

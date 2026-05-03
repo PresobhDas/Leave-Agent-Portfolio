@@ -16,7 +16,6 @@ type MessageType = {
 };
 
 const AZURE_URL = "https://leave-agent-api.ashyglacier-369787e5.westus2.azurecontainerapps.io/agent";
-const EVALUATE_URL = "https://leave-agent-api.ashyglacier-369787e5.westus2.azurecontainerapps.io/evaluate";
 
 const SUGGESTED = [
   "What can this AI agent do?",
@@ -24,12 +23,11 @@ const SUGGESTED = [
   "What problems does this project solve?",
   "What is the tech stack?",
 ];
-
-export default function ChatWindow() {
-  const [messages, setMessages] = useState<MessageType[]>([{
-    role: "assistant",
-    content: "👋 Hi! I'm the AI agent behind this portfolio. Ask me anything about the architecture, tech stack, or what problems this system solves!",
-  }]);
+type Props = {
+  messages: MessageType[];
+  setMessages: React.Dispatch<React.SetStateAction<MessageType[]>>;
+};
+export default function ChatWindow({ messages, setMessages }: Props) {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
