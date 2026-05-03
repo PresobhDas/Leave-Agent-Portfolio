@@ -20,7 +20,6 @@ function AgentMessageBlock({ messages }: { messages: AgentMessage[] }) {
     <div style={{ display: "flex", flexDirection: "column", gap: "12px", width: "100%" }}>
       {visibleMessages.map((m, i) => {
         const isAI = m.type === "ai";
-        const isTool = m.type === "tool";
 
         return (
           <div key={i} style={{

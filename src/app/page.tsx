@@ -32,10 +32,15 @@ const CARDS = [
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<"chat" | "evaluation">("chat");
+  type AgentMessage = {
+    type: "human" | "ai" | "tool" | string;
+    content: string;
+  };
+
   type MessageType = {
     role: "user" | "assistant";
     content: string;
-    agentMessages?: any[];
+    agentMessages?: AgentMessage[];
   };
 
   const [messages, setMessages] = useState<MessageType[]>([
@@ -197,6 +202,7 @@ const [metricsError, setMetricsError] = useState<string | null>(null);
                   });
 
                 } catch (err) {
+                  console.error(err);
                   setMetricsError("Failed to fetch metrics");
                 } finally {
                   setMetricsLoading(false);
