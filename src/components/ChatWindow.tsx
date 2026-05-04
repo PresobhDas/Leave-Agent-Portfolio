@@ -26,19 +26,22 @@ const SUGGESTED = [
 type Props = {
   messages: MessageType[];
   setMessages: React.Dispatch<React.SetStateAction<MessageType[]>>;
+  selectedUser: string;
 };
-export default function ChatWindow({ messages, setMessages }: Props) {
+export default function ChatWindow({ messages, setMessages, selectedUser }: Props) {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const isDisabled = !selectedUser;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
   const sendMessage = async (text?: string) => {
+    if (isDisabled) return;
     const userText = text || input.trim();
     if (!userText || loading) return;
     setInput("");
@@ -167,7 +170,7 @@ export default function ChatWindow({ messages, setMessages }: Props) {
       </div>
 
       {/* Suggested */}
-      {messages.length <= 1 && (
+      {messages.length <= 1 && !isDisabled && (
         <div className="px-4 pb-3 flex flex-wrap gap-2">
           {SUGGESTED.map((q) => (
             <button key={q} onClick={() => sendMessage(q)}
@@ -193,8 +196,8 @@ export default function ChatWindow({ messages, setMessages }: Props) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            cursor: loading ? "not-allowed" : "pointer",
-            opacity: loading ? 0.5 : 1,
+            cursor: loading || isDisabled ? "not-allowed" : "pointer",
+            opacity: loading || isDisabled ? 0.5 : 1,
             fontSize: "18px",
           }}
           title="Upload document"
@@ -203,7 +206,7 @@ export default function ChatWindow({ messages, setMessages }: Props) {
           <input
             type="file"
             style={{ display: "none" }}
-            disabled={loading}
+            disabled={loading || isDisabled}
             onChange={(e) => {
               handleFileUpload(e);
               e.target.value = ""; // reset input
@@ -216,8 +219,13 @@ export default function ChatWindow({ messages, setMessages }: Props) {
           ref={inputRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          placeholder="Ask something about this project..."
+          onKeyDown={(e) => e.key === "Enter" && !isDisabled && sendMessage()}
+          disabled={isDisabled}
+          placeholder={
+            isDisabled
+              ? "Select a user to start chatting..."
+              : "Ask something about this project..."
+          }
           style={{
             backgroundColor: "#0f172a",
             border: "1px solid #334155",
@@ -227,24 +235,31 @@ export default function ChatWindow({ messages, setMessages }: Props) {
             fontSize: "14px",
             outline: "none",
             flex: 1,
+            opacity: isDisabled ? 0.5 : 1,
+            cursor: isDisabled ? "not-allowed" : "text",
           }}
         />
         {/* Send button */}
         <button
           onClick={() => sendMessage()}
-          disabled={!input.trim() || loading}
+          disabled={!input.trim() || loading || isDisabled}
           style={{
-            backgroundColor: input.trim() && !loading ? "#7c3aed" : "#334155",
+            backgroundColor:
+              input.trim() && !loading && !isDisabled ? "#7c3aed" : "#334155",
             borderRadius: "12px",
             width: "42px",
             height: "42px",
             border: "none",
-            cursor: input.trim() && !loading ? "pointer" : "not-allowed",
+            cursor:
+              input.trim() && !loading && !isDisabled
+                ? "pointer"
+                : "not-allowed",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             fontSize: "18px",
             flexShrink: 0,
+            opacity: isDisabled ? 0.5 : 1,
           }}
         >
           ➤

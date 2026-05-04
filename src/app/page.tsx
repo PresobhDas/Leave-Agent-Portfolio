@@ -32,6 +32,7 @@ const CARDS = [
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<"chat" | "evaluation">("chat");
+  const [selectedUser, setSelectedUser] = useState<string>("");
   type AgentMessage = {
     type: "human" | "ai" | "tool" | string;
     content: string;
@@ -84,17 +85,45 @@ const [metricsError, setMetricsError] = useState<string | null>(null);
             </div>
           </div>
 
-          <div
-            style={{ backgroundColor: "#052e16", border: "1px solid #166534" }}
-            className="flex items-center gap-2 rounded-full px-3 py-1"
-          >
-            <span
-              style={{ backgroundColor: "#4ade80" }}
-              className="w-2 h-2 rounded-full animate-pulse inline-block"
-            />
-            <span style={{ color: "#4ade80" }} className="text-xs font-medium">
-              Live
-            </span>
+          <div className="flex items-center gap-3">
+
+            {/* 1. Dropdown */}
+            <select
+              value={selectedUser}
+              onChange={(e) => setSelectedUser(e.target.value)}
+              style={{
+                backgroundColor: "#0f172a",
+                border: "1px solid #334155",
+                color: "#fff",
+                borderRadius: "8px",
+                padding: "6px 10px",
+                fontSize: "12px",
+                outline: "none",
+                cursor: "pointer",
+              }}
+            >
+              <option value="">Select User</option>
+              <option value="E1001">E1001</option>
+              <option value="E1002">E1002</option>
+              <option value="E1003">E1003</option>
+              <option value="HRUser">HRUser</option>
+              <option value="HRAdmin">HRAdmin</option>
+            </select>
+
+            {/* 2. Live Badge (unchanged) */}
+            <div
+              style={{ backgroundColor: "#052e16", border: "1px solid #166534" }}
+              className="flex items-center gap-2 rounded-full px-3 py-1"
+            >
+              <span
+                style={{ backgroundColor: "#4ade80" }}
+                className="w-2 h-2 rounded-full animate-pulse inline-block"
+              />
+              <span style={{ color: "#4ade80" }} className="text-xs font-medium">
+                Live
+              </span>
+            </div>
+
           </div>
         </div>
       </header>
@@ -166,7 +195,11 @@ const [metricsError, setMetricsError] = useState<string | null>(null);
 
         {/* Tab Content */}
         {activeTab === "chat" && (
-          <ChatWindow messages={messages} setMessages={setMessages} />
+          <ChatWindow
+            messages={messages}
+            setMessages={setMessages}
+            selectedUser={selectedUser}
+          />
         )}
 
         {activeTab === "evaluation" && (
