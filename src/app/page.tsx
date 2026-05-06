@@ -62,6 +62,7 @@ const [metricsError, setMetricsError] = useState<string | null>(null);
 type HistoryItem = {
   question: string;
   answer: string;
+  confidence?: number;
 };
 useEffect(() => {
   if (!selectedUser) return;
@@ -93,6 +94,7 @@ useEffect(() => {
         {
           role: "assistant",
           content: item.answer,
+          confidence: item.confidence,   // 👈 ADD THIS
         },
       ]);
 
