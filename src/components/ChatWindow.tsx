@@ -12,7 +12,6 @@ type AgentMessage = {
 type MessageType = {
   role: "user" | "assistant";
   content: string;
-  agentMessages?: AgentMessage[];
 };
 
 const AZURE_URL = "https://leave-agent-api.ashyglacier-369787e5.westus2.azurecontainerapps.io/agent";
@@ -61,14 +60,7 @@ export default function ChatWindow({ messages, setMessages, selectedUser }: Prop
       });
       if (!res.ok) throw new Error();
       const data = await res.json();
-      const agentMessages: AgentMessage[] = data?.messages ?? [];
-
-      // Get last AI message as the summary content
-      const lastAiMessage = [...agentMessages]
-        .reverse()
-        .find((m) => m.type === "ai");
-
-      const reply = lastAiMessage?.content ?? "No response received.";
+      const reply = data?.llmResponse ?? "No response received.";
 
       // Store full agent trace for display
       setMessages((prev) => [
@@ -76,7 +68,6 @@ export default function ChatWindow({ messages, setMessages, selectedUser }: Prop
         {
           role: "assistant",
           content: reply,
-          agentMessages: agentMessages,
         },
       ]);
     } catch {
