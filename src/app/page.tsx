@@ -52,7 +52,6 @@ export default function Home() {
         "👋 Hi! I'm the AI agent behind this portfolio. Ask me anything about the architecture, tech stack, or what problems this system solves!",
     },
   ]);
-  const [historyLoading, setHistoryLoading] = useState(false);
   const [metrics, setMetrics] = useState<{
   faithfulness: number;
   relevancy: number;
@@ -60,12 +59,15 @@ export default function Home() {
 
 const [metricsLoading, setMetricsLoading] = useState(false);
 const [metricsError, setMetricsError] = useState<string | null>(null);
+type HistoryItem = {
+  question: string;
+  answer: string;
+};
 useEffect(() => {
   if (!selectedUser) return;
 
   const fetchHistory = async () => {
     try {
-      setHistoryLoading(true);
 
       // 🔥 BACKEND API (placeholder)
       const res = await fetch(
@@ -83,7 +85,7 @@ useEffect(() => {
        * ]
        */
 
-      const historyMessages = data.flatMap((item: any) => [
+      const historyMessages = (data as HistoryItem[]).flatMap((item) => [
         {
           role: "user",
           content: item.question,
@@ -94,15 +96,17 @@ useEffect(() => {
         },
       ]);
 
+      const fallbackMessages: MessageType[] = [
+        {
+          role: "assistant",
+          content: "No previous history found for this user.",
+        },
+      ];
+
       setMessages(
         historyMessages.length > 0
-          ? historyMessages
-          : [
-              {
-                role: "assistant",
-                content: "No previous history found for this user.",
-              },
-            ]
+          ? (historyMessages as MessageType[])
+          : fallbackMessages
       );
 
     } catch (err) {
@@ -115,7 +119,6 @@ useEffect(() => {
         },
       ]);
     } finally {
-      setHistoryLoading(false);
     }
   };
 
