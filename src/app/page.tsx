@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ChatWindow from "@/components/ChatWindow";
 import TechBadge from "@/components/TechBadge";
 
@@ -45,12 +45,14 @@ export default function Home() {
   };
 
   const [messages, setMessages] = useState<MessageType[]>([
+    
     {
       role: "assistant",
       content:
         "👋 Hi! I'm the AI agent behind this portfolio. Ask me anything about the architecture, tech stack, or what problems this system solves!",
     },
   ]);
+  const [historyLoading, setHistoryLoading] = useState(false);
   const [metrics, setMetrics] = useState<{
   faithfulness: number;
   relevancy: number;
@@ -58,6 +60,67 @@ export default function Home() {
 
 const [metricsLoading, setMetricsLoading] = useState(false);
 const [metricsError, setMetricsError] = useState<string | null>(null);
+useEffect(() => {
+  if (!selectedUser) return;
+
+  const fetchHistory = async () => {
+    try {
+      setHistoryLoading(true);
+
+      // 🔥 BACKEND API (placeholder)
+      const res = await fetch(
+        `https://leave-agent-api.ashyglacier-369787e5.westus2.azurecontainerapps.io/history?user_id=${selectedUser}`
+      );
+
+      if (!res.ok) throw new Error();
+
+      const data = await res.json();
+
+      /**
+       * Expected response:
+       * [
+       *   { question: "...", answer: "..." }
+       * ]
+       */
+
+      const historyMessages = data.flatMap((item: any) => [
+        {
+          role: "user",
+          content: item.question,
+        },
+        {
+          role: "assistant",
+          content: item.answer,
+        },
+      ]);
+
+      setMessages(
+        historyMessages.length > 0
+          ? historyMessages
+          : [
+              {
+                role: "assistant",
+                content: "No previous history found for this user.",
+              },
+            ]
+      );
+
+    } catch (err) {
+      console.error("History fetch failed", err);
+
+      setMessages([
+        {
+          role: "assistant",
+          content: "⚠️ Failed to load chat history.",
+        },
+      ]);
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  fetchHistory();
+}, [selectedUser]);
 
   return (
     <main style={{ backgroundColor: "#0f172a", minHeight: "100vh" }} className="flex flex-col">
