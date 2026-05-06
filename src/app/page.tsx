@@ -38,11 +38,11 @@ export default function Home() {
     content: string;
   };
 
-  type MessageType = {
-    role: "user" | "assistant";
-    content: string;
-    agentMessages?: AgentMessage[];
-  };
+type MessageType = {
+  role: "user" | "assistant";
+  content: string;
+  confidence?: number;
+};
 
   const [messages, setMessages] = useState<MessageType[]>([
     

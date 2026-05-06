@@ -12,6 +12,7 @@ type AgentMessage = {
 type MessageType = {
   role: "user" | "assistant";
   content: string;
+  confidence?: number;
 };
 
 const AZURE_URL = "https://leave-agent-api.ashyglacier-369787e5.westus2.azurecontainerapps.io/agent";
@@ -61,13 +62,14 @@ export default function ChatWindow({ messages, setMessages, selectedUser }: Prop
       if (!res.ok) throw new Error();
       const data = await res.json();
       const reply = data?.llmResponse ?? "No response received.";
-
+      const confidence = data?.confidence ?? null;
       // Store full agent trace for display
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
           content: reply,
+          confidence: confidence,
         },
       ]);
     } catch {
