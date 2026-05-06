@@ -54,7 +54,10 @@ export default function ChatWindow({ messages, setMessages, selectedUser }: Prop
       const res = await fetch(AZURE_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ inp_query: userText }),
+        body: JSON.stringify({
+        inp_query: userText,
+        user_id: selectedUser,
+      }),
       });
       if (!res.ok) throw new Error();
       const data = await res.json();
